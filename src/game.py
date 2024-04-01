@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
 from game_objects.spaceship import Spaceship
+from game_objects.asteroid import Asteroid
 
 
 class Game:
@@ -12,13 +13,18 @@ class Game:
             QPoint((config.WINDOW_WIDTH - 45) // 2, (config.WINDOW_HEIGHT - 60) // 2),
             QSize(45, 60)
         )
+        self.asteroids = [Asteroid(3) for _ in range(4)]
 
     def update(self):
         self.spaceship.update()
+        for asteroid in self.asteroids:
+            asteroid.update()
 
     def draw(self, painter: QPainter):
         painter.fillRect(0, 0, config.WINDOW_WIDTH, config.WINDOW_HEIGHT, QBrush(Qt.SolidPattern))
         self.spaceship.draw(painter)
+        for asteroid in self.asteroids:
+            asteroid.draw(painter)
 
     def startBoosting(self):
         self.spaceship.boosting = True
