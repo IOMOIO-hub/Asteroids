@@ -1,1 +1,4 @@
 .idea
+/src/__pycache__
+/src/game_objects/__pycache__
+/__pycache__
