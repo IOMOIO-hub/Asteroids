@@ -22,7 +22,7 @@ class Game:
     def update(self):
         self.spaceship.update()
 
-        asteroids_to_destroy = []
+        asteroids_to_destroy = set()
         for asteroid in self.asteroids:
             asteroid.update()
 
@@ -33,20 +33,23 @@ class Game:
             if self.lives == 0:
                 return self.restart()
             self.spaceship.reset()
-            asteroids_to_destroy.append(asteroid)
+            asteroids_to_destroy.add(asteroid)
 
+        bullets_to_remove = set()
         for bullet in self.bullets:
             bullet.update()
             if bullet.isOutOfView():
-                self.bullets.remove(bullet)
+                bullets_to_remove.add(bullet)
 
             for asteroid in self.asteroids:
                 if bullet.isCollide(asteroid):
-                    self.bullets.remove(bullet)
-                    asteroids_to_destroy.append(asteroid)
+                    bullets_to_remove.add(bullet)
+                    asteroids_to_destroy.add(asteroid)
 
         for asteroid in asteroids_to_destroy:
             self.destroyAsteroid(asteroid)
+        for bullet in bullets_to_remove:
+            self.bullets.remove(bullet)
 
     def destroyAsteroid(self, asteroid: Asteroid):
         self.asteroids.remove(asteroid)
