@@ -11,18 +11,27 @@ from src.game_objects.game_object import GameObject
 
 class Spaceship(GameObject):
 
-    def __init__(self, location: QPoint, size: QSize):
-        super().__init__(location, size)
+    def __init__(self):
+        super().__init__(
+            QPoint((config.WINDOW_WIDTH - 30) // 2, (config.WINDOW_HEIGHT - 40) // 2),
+            QSize(45, 60)
+        )
 
         self.speed_vectors = {}
-        self.deceleration = 0.15
+        self.deceleration = 0.125
         self.boosting = False
         self.shooting = False
         self.rotation_to_right = False
         self.rotation_to_left = False
 
     def boostSpeed(self):
-        self.speed_vectors[self.degree] = min(self.speed_vectors.get(self.degree, 0) + 0.5, 15)
+        self.speed_vectors[self.degree] = min(self.speed_vectors.get(self.degree, 0) + 0.4, 12.5)
+
+    def reset(self):
+        self.location.setX((config.WINDOW_WIDTH - self.size.width()) // 2)
+        self.location.setY((config.WINDOW_HEIGHT - self.size.height()) // 2)
+        self.speed_vectors = {}
+        self.degree = 0
 
     def update(self):
 
@@ -47,25 +56,24 @@ class Spaceship(GameObject):
         self.location.setY((self.location.y() + config.WINDOW_HEIGHT) % config.WINDOW_HEIGHT)
 
     def draw(self, painter: QPainter):
+        width = self.size.width()
+        height = self.size.height()
 
         transform = QTransform()
         transform.translate(self.location.x(), self.location.y())
-        transform.translate(self.size.width() * 0.5, self.size.height() * 0.5)
+        transform.translate(width // 2, height // 2)
         transform.rotate(self.degree)
-        transform.translate(-self.size.width() * 0.5, -self.size.height() * 0.5)
+        transform.translate(-width // 2, -height // 2)
         painter.setTransform(transform)
 
         painter.setPen(QPen(QColor(Qt.white), 3))
 
-        painter.drawLine(self.size.width() // 2, 0, 0, self.size.height())
-        painter.drawLine(self.size.width() // 2, 0, self.size.width(), self.size.height())
-        painter.drawLine(self.size.width() // 10, self.size.height() // 5 * 4, self.size.width() // 10 * 9,
-                         self.size.height() // 5 * 4)
+        painter.drawLine(width // 2, 0, 0, height)
+        painter.drawLine(width // 2, 0, width, height)
+        painter.drawLine(width // 10, height // 5 * 4, width // 10 * 9, height // 5 * 4)
 
         if self.boosting and random() < 0.75:
-            painter.drawLine(self.size.width() // 2, self.size.height(), self.size.width() // 5 * 2,
-                             self.size.height() // 5 * 4)
-            painter.drawLine(self.size.width() // 2, self.size.height(), self.size.width() // 5 * 3,
-                             self.size.height() // 5 * 4)
+            painter.drawLine(width // 2, height + 10, width // 10 * 3, height // 5 * 4)
+            painter.drawLine(width // 2, height + 10, width // 10 * 7, height // 5 * 4)
 
         painter.setTransform(QTransform())

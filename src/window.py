@@ -30,21 +30,24 @@ class Window(QMainWindow):
 
         if config.DEBUG:
             painter.setPen(QColor(Qt.white))
-            painter.setFont(QFont('Arial', 10))
-            painter.drawText(10, 30, str(self.game.spaceship.speed_vectors))
+            painter.setFont(QFont('Arial', 8))
+            painter.drawText(10, 20, str(self.game.bullets))
 
     def keyPressEvent(self, event):
-        {
+        keyboard = {
             Qt.Key_Up: self.game.startBoosting,
             Qt.Key_Right: self.game.startRotationToRight,
             Qt.Key_Left: self.game.startRotationToLeft,
-            Qt.Key_Space: self.game.startShooting
-        }[event.key()]()
+            Qt.Key_Space: self.game.shoot
+        }
+        if event.key() in keyboard:
+            keyboard[event.key()]()
 
     def keyReleaseEvent(self, event):
-        {
+        keyboard = {
             Qt.Key_Up: self.game.stopBoosting,
             Qt.Key_Right: self.game.stopRotation,
-            Qt.Key_Left: self.game.stopRotation,
-            Qt.Key_Space: self.game.stopShooting
-        }[event.key()]()
+            Qt.Key_Left: self.game.stopRotation
+        }
+        if event.key() in keyboard:
+            keyboard[event.key()]()

@@ -7,12 +7,12 @@ from PyQt5.QtCore import *
 
 
 class GameObject:
-    def __init__(self, location: QPoint, size: QSize):
+    def __init__(self, location: QPoint, size: QSize, speed: float = 0, degree: int = 0):
         self.location = location
         self.size = size
 
-        self.speed = 0
-        self.degree = 0
+        self.speed = speed
+        self.degree = degree
 
     def update(self):
         self.location.setX(int(self.location.x() + self.speed * math.sin(math.pi / 180 * self.degree)))
