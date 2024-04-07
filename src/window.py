@@ -17,10 +17,10 @@ class Window(QMainWindow):
         self.game = Game()
 
         self.timer = QTimer(self)
-        self.timer.timeout.connect(self.gameLoop)
+        self.timer.timeout.connect(self.game_loop)
         self.timer.start(1000 // config.FRAME_RATE)
 
-    def gameLoop(self):
+    def game_loop(self):
         self.game.update()
         self.update()
 
@@ -35,9 +35,9 @@ class Window(QMainWindow):
 
     def keyPressEvent(self, event):
         keyboard = {
-            Qt.Key_Up: self.game.startBoosting,
-            Qt.Key_Right: self.game.startRotationToRight,
-            Qt.Key_Left: self.game.startRotationToLeft,
+            Qt.Key_W: self.game.start_boosting,
+            Qt.Key_D: self.game.start_rotation_to_right,
+            Qt.Key_A: self.game.start_rotation_to_left,
             Qt.Key_Space: self.game.shoot
         }
         if event.key() in keyboard:
@@ -45,9 +45,9 @@ class Window(QMainWindow):
 
     def keyReleaseEvent(self, event):
         keyboard = {
-            Qt.Key_Up: self.game.stopBoosting,
-            Qt.Key_Right: self.game.stopRotation,
-            Qt.Key_Left: self.game.stopRotation
+            Qt.Key_W: self.game.stop_boosting,
+            Qt.Key_D: self.game.stop_rotation,
+            Qt.Key_A: self.game.stop_rotation
         }
         if event.key() in keyboard:
             keyboard[event.key()]()

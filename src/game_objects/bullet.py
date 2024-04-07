@@ -22,7 +22,7 @@ class Bullet(GameObject):
         painter.drawRoundedRect(0, 0, self.size.width(), self.size.height(), 1, 1)
         painter.translate(-self.location.x(), -self.location.y())
 
-    def isOutOfView(self):
+    def is_out_of_view(self):
         return not (0 <= self.location.x() <= config.WINDOW_WIDTH and 0 <= self.location.y() <= config.WINDOW_HEIGHT)
 
     def __repr__(self):

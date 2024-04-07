@@ -26,7 +26,7 @@ class Game:
         for asteroid in self.asteroids:
             asteroid.update()
 
-            if not self.spaceship.isCollide(asteroid):
+            if not self.spaceship.is_collide(asteroid):
                 continue
 
             self.lives -= 1
@@ -38,20 +38,20 @@ class Game:
         bullets_to_remove = set()
         for bullet in self.bullets:
             bullet.update()
-            if bullet.isOutOfView():
+            if bullet.is_out_of_view():
                 bullets_to_remove.add(bullet)
 
             for asteroid in self.asteroids:
-                if bullet.isCollide(asteroid):
+                if bullet.is_collide(asteroid):
                     bullets_to_remove.add(bullet)
                     asteroids_to_destroy.add(asteroid)
 
         for asteroid in asteroids_to_destroy:
-            self.destroyAsteroid(asteroid)
+            self.destroy_asteroid(asteroid)
         for bullet in bullets_to_remove:
             self.bullets.remove(bullet)
 
-    def destroyAsteroid(self, asteroid: Asteroid):
+    def destroy_asteroid(self, asteroid: Asteroid):
         self.asteroids.remove(asteroid)
         self.score += {1: 100, 2: 50, 3: 20}[asteroid.rank]
         if asteroid.rank > 1:
@@ -71,21 +71,21 @@ class Game:
         painter.drawText(10, 60, str(self.score))
         painter.drawText(10, 100, "A" * self.lives)
 
-    def startBoosting(self):
+    def start_boosting(self):
         self.spaceship.boosting = True
 
-    def stopBoosting(self):
+    def stop_boosting(self):
         self.spaceship.boosting = False
 
-    def startRotationToRight(self):
+    def start_rotation_to_right(self):
         self.spaceship.rotation_to_right = True
         self.spaceship.rotation_to_left = False
 
-    def startRotationToLeft(self):
+    def start_rotation_to_left(self):
         self.spaceship.rotation_to_right = False
         self.spaceship.rotation_to_left = True
 
-    def stopRotation(self):
+    def stop_rotation(self):
         self.spaceship.rotation_to_right = False
         self.spaceship.rotation_to_left = False
 

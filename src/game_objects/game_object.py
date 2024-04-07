@@ -27,7 +27,7 @@ class GameObject:
         painter.drawRect(0, 0, self.size.width(), self.size.height())
         painter.translate(-self.location.x(), -self.location.y())
 
-    def isCollide(self, other) -> bool:
+    def is_collide(self, other) -> bool:
         return (self.location.x() < other.location.x() + other.size.width() and
                 self.location.x() + self.size.width() > other.location.x() and
                 self.location.y() < other.location.y() + other.size.height() and

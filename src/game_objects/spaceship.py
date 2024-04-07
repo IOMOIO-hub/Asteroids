@@ -24,7 +24,7 @@ class Spaceship(GameObject):
         self.rotation_to_right = False
         self.rotation_to_left = False
 
-    def boostSpeed(self):
+    def boost_speed(self):
         self.speed_vectors[self.degree] = min(self.speed_vectors.get(self.degree, 0) + 0.4, 12.5)
 
     def reset(self):
@@ -35,7 +35,7 @@ class Spaceship(GameObject):
 
     def update(self):
 
-        if self.boosting: self.boostSpeed()
+        if self.boosting: self.boost_speed()
         if self.rotation_to_right: self.degree += 7.5
         if self.rotation_to_left: self.degree -= 7.5
 
