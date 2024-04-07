@@ -1,4 +1,4 @@
-import config
+from yaml import safe_load
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -11,14 +11,18 @@ class Window(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.resize(config.WINDOW_WIDTH, config.WINDOW_HEIGHT)
+
+        with open('config.yml', 'r') as f:
+            self.config = safe_load(f)
+
+        self.resize(self.config['window_width'], self.config['window_height'])
         self.setWindowTitle("Asteroids")
 
         self.game = Game()
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.game_loop)
-        self.timer.start(1000 // config.FRAME_RATE)
+        self.timer.start(1000 // self.config['frame_rate'])
 
     def game_loop(self):
         self.game.update()
@@ -28,7 +32,7 @@ class Window(QMainWindow):
         painter = QPainter(self)
         self.game.draw(painter)
 
-        if config.DEBUG:
+        if self.config['debug']:
             painter.setPen(QColor(Qt.white))
             painter.setFont(QFont('Arial', 8))
             painter.drawText(10, 20, str(self.game.bullets))

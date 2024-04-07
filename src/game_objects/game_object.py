@@ -1,4 +1,4 @@
-from src import config
+from yaml import safe_load
 
 import math
 
@@ -14,12 +14,15 @@ class GameObject:
         self.speed = speed
         self.degree = degree
 
+        with open('config.yml', 'r') as f:
+            self.config = safe_load(f)
+
     def update(self):
         self.location.setX(int(self.location.x() + self.speed * math.sin(math.pi / 180 * self.degree)))
         self.location.setY(int(self.location.y() - self.speed * math.cos(math.pi / 180 * self.degree)))
 
-        self.location.setX((self.location.x() + config.WINDOW_WIDTH) % config.WINDOW_WIDTH)
-        self.location.setY((self.location.y() + config.WINDOW_HEIGHT) % config.WINDOW_HEIGHT)
+        self.location.setX((self.location.x() + self.config['window_width']) % self.config['window_width'])
+        self.location.setY((self.location.y() + self.config['window_height']) % self.config['window_height'])
 
     def draw(self, painter: QPainter):
         painter.setPen(QColor(Qt.white))

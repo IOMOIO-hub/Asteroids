@@ -1,4 +1,4 @@
-from src import config
+from yaml import safe_load
 
 from random import uniform, randint
 
@@ -10,7 +10,12 @@ from src.game_objects.game_object import GameObject
 
 class Asteroid(GameObject):
     def __init__(self, rank: int = 3, location: QPoint = None):
-        location = location or QPoint(randint(0, config.WINDOW_WIDTH), randint(0, config.WINDOW_HEIGHT))
+
+        with open('config.yml', 'r') as f:
+            self.config = safe_load(f)
+
+        location = location or QPoint(randint(0, self.config['window_width']),
+                                      randint(0, self.config['window_height']))
         size = QSize(rank * 40, rank * 40)
         speed = uniform(1.5, 3)
         degree = randint(0, 11) * 30

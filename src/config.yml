@@ -1,0 +1,4 @@
+debug: True
+window_width: 1296
+window_height: 864
+frame_rate: 60

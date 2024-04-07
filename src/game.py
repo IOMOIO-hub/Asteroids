@@ -1,6 +1,6 @@
 import math
 
-import config
+from yaml import safe_load
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -18,6 +18,9 @@ class Game:
 
         self.score = 0
         self.lives = 3
+
+        with open('config.yml', 'r') as f:
+            self.config = safe_load(f)
 
     def update(self):
         self.spaceship.update()
@@ -59,7 +62,7 @@ class Game:
             self.asteroids.append(Asteroid(asteroid.rank - 1, QPoint(asteroid.location)))
 
     def draw(self, painter: QPainter):
-        painter.fillRect(0, 0, config.WINDOW_WIDTH, config.WINDOW_HEIGHT, QBrush(Qt.SolidPattern))
+        painter.fillRect(0, 0, self.config['window_width'], self.config['window_height'], QBrush(Qt.SolidPattern))
         self.spaceship.draw(painter)
         for asteroid in self.asteroids:
             asteroid.draw(painter)

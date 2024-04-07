@@ -1,4 +1,4 @@
-from src import config
+from yaml import safe_load
 
 import math
 from random import random
@@ -12,8 +12,12 @@ from src.game_objects.game_object import GameObject
 class Spaceship(GameObject):
 
     def __init__(self):
+
+        with open('config.yml', 'r') as f:
+            self.config = safe_load(f)
+
         super().__init__(
-            QPoint((config.WINDOW_WIDTH - 30) // 2, (config.WINDOW_HEIGHT - 40) // 2),
+            QPoint((self.config['window_width'] - 30) // 2, (self.config['window_height'] - 40) // 2),
             QSize(45, 60)
         )
 
@@ -28,8 +32,8 @@ class Spaceship(GameObject):
         self.speed_vectors[self.degree] = min(self.speed_vectors.get(self.degree, 0) + 0.4, 12.5)
 
     def reset(self):
-        self.location.setX((config.WINDOW_WIDTH - self.size.width()) // 2)
-        self.location.setY((config.WINDOW_HEIGHT - self.size.height()) // 2)
+        self.location.setX((self.config['window_width'] - self.size.width()) // 2)
+        self.location.setY((self.config['window_height'] - self.size.height()) // 2)
         self.speed_vectors = {}
         self.degree = 0
 
@@ -52,8 +56,8 @@ class Spaceship(GameObject):
         for key in keys_to_remove:
             del self.speed_vectors[key]
 
-        self.location.setX((self.location.x() + config.WINDOW_WIDTH) % config.WINDOW_WIDTH)
-        self.location.setY((self.location.y() + config.WINDOW_HEIGHT) % config.WINDOW_HEIGHT)
+        self.location.setX((self.location.x() + self.config['window_width']) % self.config['window_width'])
+        self.location.setY((self.location.y() + self.config['window_height']) % self.config['window_height'])
 
     def draw(self, painter: QPainter):
         width = self.size.width()
