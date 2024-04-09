@@ -1,6 +1,6 @@
-import math
-
 from yaml import safe_load
+
+from math import sin, cos, pi
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -12,39 +12,40 @@ from game_objects.bullet import Bullet
 
 class Game:
     def __init__(self):
-        self.spaceship = Spaceship()
-        self.asteroids = [Asteroid() for _ in range(4)]
-        self.bullets = []
+        self._spaceship = Spaceship()
+        self._asteroids = [Asteroid() for _ in range(4)]
+        self._bullets = []
 
-        self.score = 0
-        self.lives = 3
+        self._score = 0
+        self._lives = 3
 
         with open('config.yml', 'r') as f:
-            self.config = safe_load(f)
+            self._config = safe_load(f)
 
     def update(self):
-        self.spaceship.update()
+        self._spaceship.update()
 
         asteroids_to_destroy = set()
-        for asteroid in self.asteroids:
+        for asteroid in self._asteroids:
             asteroid.update()
 
-            if not self.spaceship.is_collide(asteroid):
+            if not self._spaceship.is_collide(asteroid):
                 continue
 
-            self.lives -= 1
-            if self.lives == 0:
+            self._lives -= 1
+            if self._lives == 0:
                 return self.restart()
-            self.spaceship.reset()
+            self._spaceship.reset()
             asteroids_to_destroy.add(asteroid)
 
         bullets_to_remove = set()
-        for bullet in self.bullets:
+        for bullet in self._bullets:
             bullet.update()
+
             if bullet.is_out_of_view():
                 bullets_to_remove.add(bullet)
 
-            for asteroid in self.asteroids:
+            for asteroid in self._asteroids:
                 if bullet.is_collide(asteroid):
                     bullets_to_remove.add(bullet)
                     asteroids_to_destroy.add(asteroid)
@@ -52,52 +53,54 @@ class Game:
         for asteroid in asteroids_to_destroy:
             self.destroy_asteroid(asteroid)
         for bullet in bullets_to_remove:
-            self.bullets.remove(bullet)
+            self._bullets.remove(bullet)
 
     def destroy_asteroid(self, asteroid: Asteroid):
-        self.asteroids.remove(asteroid)
-        self.score += {1: 100, 2: 50, 3: 20}[asteroid.rank]
+        self._asteroids.remove(asteroid)
+        self._score += {1: 100, 2: 50, 3: 20}[asteroid.rank]
         if asteroid.rank > 1:
-            self.asteroids.append(Asteroid(asteroid.rank - 1, QPoint(asteroid.location)))
-            self.asteroids.append(Asteroid(asteroid.rank - 1, QPoint(asteroid.location)))
+            self._asteroids.append(Asteroid(asteroid.rank - 1, QPoint(asteroid.x, asteroid.y)))
+            self._asteroids.append(Asteroid(asteroid.rank - 1, QPoint(asteroid.x, asteroid.y)))
 
     def draw(self, painter: QPainter):
-        painter.fillRect(0, 0, self.config['window_width'], self.config['window_height'], QBrush(Qt.SolidPattern))
-        self.spaceship.draw(painter)
-        for asteroid in self.asteroids:
+        painter.fillRect(0, 0, self._config['window_width'], self._config['window_height'], QBrush(Qt.SolidPattern))
+
+        self._spaceship.draw(painter)
+
+        for asteroid in self._asteroids:
             asteroid.draw(painter)
-        for bullet in self.bullets:
+
+        for bullet in self._bullets:
             bullet.draw(painter)
 
         painter.setPen(QColor(Qt.white))
         painter.setFont(QFont('Courier New', 24))
-        painter.drawText(10, 60, str(self.score))
-        painter.drawText(10, 100, "A" * self.lives)
+        painter.drawText(10, 60, str(self._score))
+        painter.drawText(10, 100, "A" * self._lives)
 
     def start_boosting(self):
-        self.spaceship.boosting = True
+        self._spaceship.boosting = True
 
     def stop_boosting(self):
-        self.spaceship.boosting = False
+        self._spaceship.boosting = False
 
     def start_rotation_to_right(self):
-        self.spaceship.rotation_to_right = True
-        self.spaceship.rotation_to_left = False
+        self._spaceship.rotation_factor = 1
 
     def start_rotation_to_left(self):
-        self.spaceship.rotation_to_right = False
-        self.spaceship.rotation_to_left = True
+        self._spaceship.rotation_factor = -1
 
     def stop_rotation(self):
-        self.spaceship.rotation_to_right = False
-        self.spaceship.rotation_to_left = False
+        self._spaceship.rotation_factor = 0
 
     def shoot(self):
-        new_bullet_x = self.spaceship.location.x() + (1 + math.sin(math.pi / 180 * self.spaceship.degree)) * (
-                self.spaceship.size.width() // 2)
-        new_bullet_y = self.spaceship.location.y() + (1 - math.cos(math.pi / 180 * self.spaceship.degree)) * (
-                self.spaceship.size.height() // 2)
-        self.bullets.append(Bullet(QPoint(int(new_bullet_x), int(new_bullet_y)), self.spaceship.degree))
+
+        if len(self._bullets) > 8:
+            return
+
+        new_bullet_x = self._spaceship.x + (1 + sin(pi / 180 * self._spaceship.degree)) * (self._spaceship.width // 2)
+        new_bullet_y = self._spaceship.y + (1 - cos(pi / 180 * self._spaceship.degree)) * (self._spaceship.height // 2)
+        self._bullets.append(Bullet(QPoint(new_bullet_x, new_bullet_y), self._spaceship.degree))
 
     def restart(self):
         self.__init__()

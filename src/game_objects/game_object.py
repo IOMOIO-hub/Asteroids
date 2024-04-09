@@ -1,37 +1,57 @@
+from abc import ABC, abstractmethod
+from math import sin, cos, pi
 from yaml import safe_load
-
-import math
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 
-class GameObject:
+class GameObject(ABC):
     def __init__(self, location: QPoint, size: QSize, speed: float = 0, degree: int = 0):
-        self.location = location
-        self.size = size
+        self._location = location
+        self._size = size
 
-        self.speed = speed
-        self.degree = degree
+        self._speed = speed
+        self._degree = degree
 
         with open('config.yml', 'r') as f:
-            self.config = safe_load(f)
+            self._config = safe_load(f)
 
     def update(self):
-        self.location.setX(int(self.location.x() + self.speed * math.sin(math.pi / 180 * self.degree)))
-        self.location.setY(int(self.location.y() - self.speed * math.cos(math.pi / 180 * self.degree)))
+        self.x += self._speed * sin(pi / 180 * self._degree)
+        self.y -= self._speed * cos(pi / 180 * self._degree)
 
-        self.location.setX((self.location.x() + self.config['window_width']) % self.config['window_width'])
-        self.location.setY((self.location.y() + self.config['window_height']) % self.config['window_height'])
+        self.x = (self.x + self._config['window_width']) % self._config['window_width']
+        self.y = (self.y + self._config['window_height']) % self._config['window_height']
 
-    def draw(self, painter: QPainter):
-        painter.setPen(QColor(Qt.white))
-        painter.translate(self.location.x(), self.location.y())
-        painter.drawRect(0, 0, self.size.width(), self.size.height())
-        painter.translate(-self.location.x(), -self.location.y())
+    @abstractmethod
+    def draw(self, painter: QPainter) -> None:
+        raise NotImplementedError
 
     def is_collide(self, other) -> bool:
-        return (self.location.x() < other.location.x() + other.size.width() and
-                self.location.x() + self.size.width() > other.location.x() and
-                self.location.y() < other.location.y() + other.size.height() and
-                self.location.y() + self.size.height() > other.location.y())
+        return (self.x < other.x + other.width and self.x + self.width > other.x and
+                self.y < other.y + other.height and self.y + self.height > other.y)
+
+    @property
+    def x(self):
+        return self._location.x()
+
+    @property
+    def y(self):
+        return self._location.y()
+
+    @x.setter
+    def x(self, value: float):
+        self._location.setX(value)
+
+    @y.setter
+    def y(self, value: float):
+        self._location.setY(value)
+
+    @property
+    def width(self):
+        return self._size.width()
+
+    @property
+    def height(self):
+        return self._size.height()
